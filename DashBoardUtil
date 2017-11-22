@@ -1,0 +1,42 @@
+package com.dashboard.app.configuration;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class DashBoardUtil {
+
+	private static final String ADMIN = "ProjectManager";
+	private static final String QA = "QualityAnalyst";
+	private static final String BA = "BusinessAnalyst";
+
+	/*---------Module List-----------*/
+	private static final String PM = "PROJ_ADMIN";
+	private static final String QA_ADMIN = "QA_ADMIN";
+	private static final String BA_ADMIN = "BA_ADMIN";
+	private static final String QA_USER = "QA";
+
+	public static Map<String, Set<String>> getUserRoleMap() {
+		Map<String, Set<String>> usersMap = new HashMap<String, Set<String>>();
+		usersMap.put(ADMIN, getAutorities(ADMIN));
+		usersMap.put(QA, getAutorities(QA));
+		usersMap.put(BA, getAutorities(BA));
+		return usersMap;
+	}
+
+	private static Set<String> getAutorities(String userName) {
+		Set<String> roleList = new HashSet<String>();
+		if (ADMIN.equalsIgnoreCase(userName)) {
+			roleList.add(PM);
+			roleList.add(QA_ADMIN);
+			roleList.add(BA_ADMIN);
+		} else if (QA.equalsIgnoreCase(userName)) {
+			roleList.add(QA_ADMIN);
+		} else if (BA.equalsIgnoreCase(userName)) {
+			roleList.add(BA_ADMIN);
+		}
+		return roleList;
+	}
+
+}
