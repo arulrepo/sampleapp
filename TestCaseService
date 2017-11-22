@@ -1,0 +1,18 @@
+package com.dashboard.app.service;
+
+import java.util.List;
+
+import com.dashboard.app.model.TestCase;
+
+
+public interface TestCaseService {
+
+	TestCase findById(int id);
+
+	List<TestCase> findByProject(String projectName);
+	
+	List<TestCase> findAll();
+	
+	void save(TestCase TestCase);
+	
+}
