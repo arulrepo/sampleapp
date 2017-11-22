@@ -1,0 +1,63 @@
+package com.dashboard.app.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table(name="APP_PROJECT")
+public class Project implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7857770016203547849L;
+
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue
+	private String id;
+
+	@Column(name="NAME", unique=true, nullable=false)
+	private String name;
+	
+	@Column(name="END_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+	
+	
+	
+}
