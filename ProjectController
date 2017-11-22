@@ -1,0 +1,161 @@
+package com.dashboard.app.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.dashboard.app.model.Project;
+import com.dashboard.app.service.ProjectService;
+
+@Controller
+@RequestMapping("/project")
+public class ProjectController {
+
+	@Autowired
+	MessageSource messageSource;
+
+	@Autowired
+	ProjectService projectService;
+
+	/**
+	 * This method will list all existing Projects.
+	 */
+	@RequestMapping(value = { "/list" }, method = RequestMethod.GET)
+	public String listProjects(ModelMap model) {
+
+		List<Project> Projects = projectService.findAllProjects();
+		model.addAttribute("projects", Projects);
+		model.addAttribute("loggedinProject", getPrincipal());
+		return "/project/projectlist";
+	}
+
+	/**
+	 * This method will provide the medium to add a new Project.
+	 */
+	@RequestMapping(value = { "/add" }, method = RequestMethod.GET)
+	public String newProject(ModelMap model) {
+		Project project = new Project();
+		model.addAttribute("project", project);
+		model.addAttribute("loggedinProject", getPrincipal());
+		return "/project/newproject";
+	}
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving Project in database. It also validates the Project input
+	 */
+	@RequestMapping(value = { "/add" }, method = RequestMethod.POST)
+	public String saveProject(@Valid Project project, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/project/newproject";
+		}
+		projectService.saveProject(project);
+		model.addAttribute("success",
+				"Project " + project.getName() + " " + project.getEndDate() + " registered successfully");
+		model.addAttribute("loggedinProject", getPrincipal());
+		// return "success";
+		return "/project/success";
+	}
+
+	/**
+	 * This method will provide the medium to update an existing Project.
+	 */
+	@RequestMapping(value = { "/edit" }, method = RequestMethod.GET)
+	public String editProject(@PathVariable String projectName, ModelMap model) {
+		Project project = projectService.findByName(projectName);
+		model.addAttribute("project", project);
+		model.addAttribute("loggedinProject", getPrincipal());
+		return "/project/newproject";
+	}
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * updating Project in database. It also validates the Project input
+	 */
+	@RequestMapping(value = { "/edit" }, method = RequestMethod.POST)
+	public String updateProject(@Valid Project project, BindingResult result, ModelMap model,
+			@PathVariable String projectName) {
+
+		if (result.hasErrors()) {
+			return "/project/newproject";
+		}
+		projectService.updateProject(project);
+
+		model.addAttribute("success",
+				"Project " + project.getName() + " " + project.getEndDate() + " updated successfully");
+		model.addAttribute("loggedinProject", getPrincipal());
+		return "/project/success";
+	}
+
+	/**
+	 * This method will delete an Project by it's SSOID value.
+	 */
+	@RequestMapping(value = { "/delete" }, method = RequestMethod.GET)
+	public String deleteProject(@PathVariable String projectName) {
+		projectService.deleteProjectByName(projectName);
+		return "redirect:/project/projectlist";
+	}
+
+	/**
+	 * This method handles Access-Denied redirect.
+	 */
+	@RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
+	public String accessDeniedPage(ModelMap model) {
+		model.addAttribute("loggedinProject", getPrincipal());
+		return "accessDenied";
+	}
+
+	/**
+	 * This method handles login GET requests. If Projects is already logged-in
+	 * and tries to goto login page again, will be redirected to list page.
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String loginPage() {
+		if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+			return "login";
+		} else {
+			return "redirect:/project/projectlist";
+		}
+	}
+
+	/**
+	 * This method handles logout requests. Toggle the handlers if you are
+	 * RememberMe functionality is useless in your app.
+	 */
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+			SecurityContextHolder.getContext().setAuthentication(null);
+		}
+		return "redirect:/login?logout";
+	}
+
+	/**
+	 * This method returns the principal[Project-name] of logged-in Project.
+	 */
+	private String getPrincipal() {
+		String userName = null;
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		userName = principal.toString();
+		return userName;
+	}
+
+
+}
