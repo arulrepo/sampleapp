@@ -1,0 +1,117 @@
+package com.dashboard.app.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+@Entity
+@Table(name="APP_ISSUES")
+public class Issues implements Serializable{
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8067581011900972589L;
+
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue
+	private Integer id;
+
+	@NotEmpty
+	@Column(name="NAME", unique=true, nullable=false)
+	private String caseName;
+	
+	@NotEmpty
+	@Column(name="DESCRIPTION", nullable=false)
+	private String description;
+		
+	@NotEmpty
+	@Column(name="PROJECT_ID", nullable=false)
+	private String projectId;
+	
+	@NotEmpty
+	@Column(name="TEST_CASE_ID", nullable=false)
+	private String testcaseId;
+	
+	@Column(name="CREATED_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@NotEmpty
+	@Column(name="STATUS", nullable=false)
+	private String status;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getCaseName() {
+		return caseName;
+	}
+
+	public void setCaseName(String caseName) {
+		this.caseName = caseName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	public String getTestcaseId() {
+		return testcaseId;
+	}
+
+	public void setTestcaseId(String testcaseId) {
+		this.testcaseId = testcaseId;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	
+	
+
+
+
+
+}
