@@ -1,0 +1,54 @@
+package com.dashboard.app.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.dashboard.app.model.Project;
+
+
+
+@Repository("projectDao")
+public class ProjectDaoImpl extends AbstractDao<Integer, Project> implements ProjectDao {
+
+	static final Logger logger = LoggerFactory.getLogger(ProjectDaoImpl.class);
+	
+	public Project findById(int id) {
+		Project project = getByKey(id);
+		return project;
+	}
+
+	public Project findByName(String projectName) {
+		logger.info("SSO : {}", projectName);
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("name", projectName));
+		Project project = (Project)crit.uniqueResult();
+		return project;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Project> findAllProjects() {
+		Criteria criteria = createEntityCriteria().addOrder(Order.asc("endDate"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+		List<Project> projects = (List<Project>) criteria.list();
+		
+		return projects;
+	}
+
+	public void save(Project project) {
+		persist(project);
+	}
+
+	public void deleteByName(String projectName) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("name", projectName));
+		Project project = (Project)crit.uniqueResult();
+		delete(project);
+	}
+
+}
