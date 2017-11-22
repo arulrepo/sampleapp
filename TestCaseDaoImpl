@@ -1,0 +1,35 @@
+package com.dashboard.app.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import com.dashboard.app.model.TestCase;
+
+@Repository("testCaseDao")
+public class TestCaseDaoImpl extends AbstractDao<Integer, TestCase> implements TestCaseDao {
+
+	public TestCase findById(int id) {
+		return getByKey(id);
+	}
+
+	public List<TestCase> findByProject(String projectName) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("name", projectName));
+		List<TestCase> testCase = (List<TestCase>) crit.list();
+		return testCase;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TestCase> findAll() {
+		Criteria crit = createEntityCriteria();
+		return (List<TestCase>) crit.list();
+	}
+
+	public void save(TestCase TestCase) {
+		persist(TestCase);
+	}
+
+}
