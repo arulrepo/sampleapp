@@ -1,0 +1,34 @@
+package com.dashboard.app.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dashboard.app.dao.TestCaseDao;
+import com.dashboard.app.model.TestCase;
+
+@Service("TestCaseService")
+@Transactional
+public class TestCaseServiceImpl implements TestCaseService {
+
+	@Autowired
+	TestCaseDao dao;
+
+	public TestCase findById(int id) {
+		return dao.findById(id);
+	}
+
+	public List<TestCase> findByProject(String project) {
+		return dao.findByProject(project);
+	}
+
+	public List<TestCase> findAll() {
+		return dao.findAll();
+	}
+
+	public void save(TestCase TestCase) {
+		dao.save(TestCase);
+	}
+}
